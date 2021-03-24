@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ToTheMoon.Api.Interfaces;
 using ToTheMoon.Api.Service;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace ToTheMoon.Api
 {
@@ -16,6 +18,13 @@ namespace ToTheMoon.Api
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient("cointree", c =>
+            {
+                c.BaseAddress = new Uri("https://trade.cointree.com");
+            })
+                .AddTransientHttpErrorPolicy(p => p.RetryAsync(2))
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromMinutes(5)));
+
             services.AddRouting();
             services.AddDistributedMemoryCache();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
