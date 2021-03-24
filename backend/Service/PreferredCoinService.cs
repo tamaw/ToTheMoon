@@ -9,6 +9,9 @@ namespace ToTheMoon.Api.Service
     {
         private IHttpContextAccessor Accessor { get; }
         private ISession Session => Accessor.HttpContext.Session;
+        private const string PreferredCoinSessionVariable = "PreferredCoin";
+        private const string DefaultCoin = "BTC";
+        private readonly string[] acceptedCoins = new string[] { "BTC", "ETH", "XRP" };
 
         public PreferredCoinService(IHttpContextAccessor  accessor)
         {
@@ -17,10 +20,6 @@ namespace ToTheMoon.Api.Service
 
         public Result<ChangePreferredCoinRequest> ValidateChangeRequest(ChangePreferredCoinRequest request)
         {
-            var acceptedCoins = new string[] {
-                "BTC", "ETH", "XRP"
-            };
-
             if(request?.Coin is null || string.IsNullOrWhiteSpace(request.Coin))
                 return Result<ChangePreferredCoinRequest>.Failed(FaultCode.CoinNotProvided);
 
@@ -32,7 +31,7 @@ namespace ToTheMoon.Api.Service
 
         public Result<ChangePreferredCoinRequest> SavePreferredCoin(ChangePreferredCoinRequest request)
         {
-            Session.SetString("PreferredCoin", request.Coin);
+            Session.SetString(PreferredCoinSessionVariable, request.Coin);
             return Result<ChangePreferredCoinRequest>.Success(request);
         }
 
@@ -41,5 +40,10 @@ namespace ToTheMoon.Api.Service
                 {
                     ChangedTo = request.Coin.Trim().ToUpper()
                 });
+
+        public string UserPreferredCoinOrDefault()
+        {
+            return Session.GetString(PreferredCoinSessionVariable) ?? DefaultCoin;
+        }
     }
 }

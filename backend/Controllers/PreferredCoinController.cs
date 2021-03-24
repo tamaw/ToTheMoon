@@ -23,5 +23,14 @@ namespace ToTheMoon.Api.Controllers
                 .OnSuccess(request => PreferredCoinService.SavePreferredCoin(request))
                 .OnSuccess(request => PreferredCoinService.MapToChangePreferredCoinResponse(request))
                 .Handle(this);
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetAction()
+        {
+            return Ok( new {
+                preferredCoin = PreferredCoinService.UserPreferredCoinOrDefault()
+            });
+        }
     }
 }

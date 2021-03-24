@@ -7,5 +7,6 @@ namespace ToTheMoon.Api.Interfaces
         Result<ChangePreferredCoinRequest> ValidateChangeRequest(ChangePreferredCoinRequest request);
         Result<ChangePreferredCoinRequest> SavePreferredCoin(ChangePreferredCoinRequest request);
         Result<ChangePreferredCoinResponse> MapToChangePreferredCoinResponse(ChangePreferredCoinRequest request);
+        string UserPreferredCoinOrDefault();
     }
 }
