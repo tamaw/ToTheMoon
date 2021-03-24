@@ -18,6 +18,7 @@ namespace ToTheMoon.Api
         {
             services.AddRouting();
             services.AddDistributedMemoryCache();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(15));
             services.AddScoped<IChangePreferredCoinService, PreferredCoinService>();
             services.AddControllers();

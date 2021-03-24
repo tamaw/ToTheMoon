@@ -33,7 +33,8 @@ namespace ToTheMoon.Api.Extensions
 
             switch (result.Fault)
             {
-                 case FaultCode.ReplaceMe:
+                 case FaultCode.CoinNotProvided:
+                 case FaultCode.CoinUnknownOrNotAccepted:
                      return controller.BadRequest(new FaultCodeResponse() {
                          FaultCode = result.Fault.ToString()
                      });
