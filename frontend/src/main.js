@@ -9,7 +9,9 @@ Vue.use(VueRouter)
 const router = new VueRouter({
   mode: 'history',
   routes: [
-      { path: '/', name: 'Home', component: () => import('./views/Home') }
+      { path: '/', name: 'Home', component: () => import('./views/Home') },
+      { path: '/404', name: '404', component: require('./views/_404').default },
+      { path: '*', redirect: '404'}
     ]
 })
 
