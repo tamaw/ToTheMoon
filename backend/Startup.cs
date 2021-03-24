@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ToTheMoon.Api.Interfaces;
+using ToTheMoon.Api.Service;
 
 namespace ToTheMoon.Api
 {
@@ -14,6 +16,10 @@ namespace ToTheMoon.Api
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRouting();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(15));
+            services.AddScoped<IChangePreferredCoinService, PreferredCoinService>();
             services.AddControllers();
         }
 
@@ -24,6 +30,7 @@ namespace ToTheMoon.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSession();
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
