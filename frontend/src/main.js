@@ -8,6 +8,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueRouter)
 Vue.use(VueAxios, axios)
+Vue.axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 
 const router = new VueRouter({
   mode: 'history',

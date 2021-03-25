@@ -30,6 +30,7 @@ namespace ToTheMoon.Api
             services.AddScoped<IChangePreferredCoinService, PreferredCoinService>();
             services.AddScoped<ICoinPriceService, CoinPriceService>();
             services.AddControllers();
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,6 +40,11 @@ namespace ToTheMoon.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(c =>  {
+                c.AllowAnyOrigin();
+                c.AllowAnyMethod();
+                c.AllowAnyHeader();
+            });
             app.UseSession();
             app.UseRouting();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
