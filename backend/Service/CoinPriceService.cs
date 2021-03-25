@@ -5,17 +5,27 @@ using ToTheMoon.Api.Interfaces;
 using System.Threading.Tasks;
 using System.Text.Json;
 using ToTheMoon.Api.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ToTheMoon.Api.Service
 {
     public class CoinPriceService : ICoinPriceService
     {
         private CointreeHttpClient CointreeHttpClient { get; }
+        private IMemoryCache MemoryCache { get; }
+        private MemoryCacheEntryOptions CacheExpiryOptions { get; }
+
         private readonly string[] acceptedCoins = new string[] { "BTC", "ETH", "XRP" };
 
-        public CoinPriceService(CointreeHttpClient httpClient)
+        public CoinPriceService(CointreeHttpClient httpClient, IMemoryCache memoryCache)
         {
             CointreeHttpClient = httpClient;
+            MemoryCache = memoryCache;
+
+            CacheExpiryOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTime.Now.AddSeconds(1)
+            };
         }
 
         public Result<string> ValidateRequest(string coin)
@@ -33,7 +43,11 @@ namespace ToTheMoon.Api.Service
         {
             try
             {
-                var coinData = await CointreeHttpClient.GetCointreeCoinData(coin);
+                bool exists = MemoryCache.TryGetValue(coin, out CointreePriceResponse coinData);
+                if (!exists) {
+                    coinData = await CointreeHttpClient.GetCointreeCoinData(coin);
+                    MemoryCache.Set(coin, coinData, CacheExpiryOptions);
+                }
 
                 return Result<CointreePriceResponse>.Success(coinData);
             }

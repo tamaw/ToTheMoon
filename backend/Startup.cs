@@ -25,6 +25,7 @@ namespace ToTheMoon.Api
             services.AddHttpClient<CointreeHttpClient>()
                 .AddTransientHttpErrorPolicy(p => p.RetryAsync(2))
                 .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromMinutes(5)));
+            services.AddMemoryCache();
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(15));
             services.AddScoped<IChangePreferredCoinService, PreferredCoinService>();
             services.AddScoped<ICoinPriceService, CoinPriceService>();

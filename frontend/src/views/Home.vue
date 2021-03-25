@@ -25,49 +25,81 @@
     <hr />
 
     <h1 class="mt-1">{{ preferredCoin }}</h1>
+    <div class="row">Ask Price: ${{ askPrice }}</div>
+
+    <div class="row">Bid Price: ${{ bidPrice }}</div>
+
+    <div class="row">Rate Price: {{ rate }}</div>
+    <div v-if="showDifference">
+      <div class="row">Previous Ask Price: ${{ previousAskPrice }}</div>
+      <div class="row">Difference: {{ percentDifference }}</div>
+    </div>
+
     <div class="row">
-      <p>Ask Price: ${{ askPrice }}</p>
+      <button type="button" class="btn btn-primary" @click="onRefreshClick">
+        Refresh
+      </button>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props:  {
-
-  },
+  props: {},
   data() {
     return {
       coins: ["BTC", "ETH", "XRP"],
       preferredCoin: null,
       askPrice: "...",
+      bidPrice: "...",
+      rate: "...",
       previousAskPrice: null,
-      precentDifference: null,
+      percentDifference: "...",
+      showDifference: false,
     };
   },
-  created() {
-    this.$http.get("/api/PreferredCoin").then((res) => {
+  async created() {
+    await this.$http.get("/api/PreferredCoin").then(async (res) => {
       this.preferredCoin = res.data.preferredCoin;
-
-      this.$http.get("/api/CoinPrice/" + this.preferredCoin).then((res) => {
-        this.askPrice = res.data.askPrice;
-      });
+      await this.priceUpdate();
     });
-    console.log("hereiam");
+  },
+  computed: {
   },
   methods: {
     async onChange(e) {
+      this.showDifference = false;
+
       this.$http
         .post("/api/PreferredCoin", { coin: e.target.value })
         .then(async (res) => {
           this.preferredCoin = res.data.changedTo;
-          this.askPrice = "...";
 
-          await this.$http
-            .get("/api/CoinPrice/" + this.preferredCoin)
-            .then((res) => {
-              this.askPrice = res.data.askPrice;
-            });
+          this.priceUpdate();
         });
+    },
+    onRefreshClick(e) {
+      this.priceUpdate();
+      this.showDifference = true;
+    },
+    calcDifference() {
+        let difference = (this.askPrice - this.previousAskPrice) / this.previousAskPrice;
+        this.percentDifference = parseFloat(difference).toFixed(10) + "%";
+    },
+    async priceUpdate() {
+      this.previousAskPrice = this.askPrice;
+      this.askPrice = "...";
+      this.bidPrice = "...";
+      this.rate = "...";
+      this.percentDifference = "...";
+
+      await this.$http
+        .get("/api/CoinPrice/" + this.preferredCoin)
+        .then((res) => {
+          this.askPrice = res.data.ask;
+          this.bidPrice = res.data.bid;
+          this.rate = res.data.rate;
+        });
+      this.calcDifference();
     },
   },
 };
