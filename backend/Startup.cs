@@ -18,18 +18,16 @@ namespace ToTheMoon.Api
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient("cointree", c =>
-            {
-                c.BaseAddress = new Uri("https://trade.cointree.com");
-            })
-                .AddTransientHttpErrorPolicy(p => p.RetryAsync(2))
-                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromMinutes(5)));
 
             services.AddRouting();
             services.AddDistributedMemoryCache();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpClient<CointreeHttpClient>()
+                .AddTransientHttpErrorPolicy(p => p.RetryAsync(2))
+                .AddTransientHttpErrorPolicy(p => p.CircuitBreakerAsync(5, TimeSpan.FromMinutes(5)));
             services.AddSession(options => options.IdleTimeout = TimeSpan.FromMinutes(15));
             services.AddScoped<IChangePreferredCoinService, PreferredCoinService>();
+            services.AddScoped<ICoinPriceService, CoinPriceService>();
             services.AddControllers();
         }
 

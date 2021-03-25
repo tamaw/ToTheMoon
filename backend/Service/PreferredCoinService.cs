@@ -20,10 +20,10 @@ namespace ToTheMoon.Api.Service
 
         public Result<ChangePreferredCoinRequest> ValidateChangeRequest(ChangePreferredCoinRequest request)
         {
-            if(request?.Coin is null || string.IsNullOrWhiteSpace(request.Coin))
+            if(string.IsNullOrWhiteSpace(request?.Coin))
                 return Result<ChangePreferredCoinRequest>.Failed(FaultCode.CoinNotProvided);
 
-            if(!string.IsNullOrWhiteSpace(request.Coin) && !acceptedCoins.Contains(request.Coin.Trim().ToUpper()))
+            if(!acceptedCoins.Contains(request.Coin.Trim().ToUpper()))
                 return Result<ChangePreferredCoinRequest>.Failed(FaultCode.CoinUnknownOrNotAccepted);
 
             return Result<ChangePreferredCoinRequest>.Success(request);

@@ -5,6 +5,8 @@ namespace ToTheMoon.Api
     {
         Fail,
         CoinUnknownOrNotAccepted,
-        CoinNotProvided
+        CoinNotProvided,
+        ErrorRetrievingCoinPrice,
+        FailedToReadResponseData
     }
 }

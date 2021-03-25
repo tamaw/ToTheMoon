@@ -18,8 +18,8 @@ namespace ToTheMoon.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Post([FromBody] ChangePreferredCoinRequest request)
-                    => PreferredCoinService.ValidateChangeRequest(request)
+        public IActionResult Post([FromBody] ChangePreferredCoinRequest request) =>
+            PreferredCoinService.ValidateChangeRequest(request)
                 .OnSuccess(request => PreferredCoinService.SavePreferredCoin(request))
                 .OnSuccess(request => PreferredCoinService.MapToChangePreferredCoinResponse(request))
                 .Handle(this);
@@ -28,7 +28,7 @@ namespace ToTheMoon.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAction()
         {
-            return Ok( new {
+            return Ok(new {
                 preferredCoin = PreferredCoinService.UserPreferredCoinOrDefault()
             });
         }
