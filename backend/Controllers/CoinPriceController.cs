@@ -17,8 +17,8 @@ namespace ToTheMoon.Api.Controllers
         }
 
         [HttpGet("{coin}") ]
-        public async Task<IActionResult> GetAskPriceAsync([FromQuery] string coin) {
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/prices/AUD/BTC");
+        public async Task<IActionResult> GetAskPriceAsync([FromRoute] string coin) {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/prices/AUD/{coin}");
 
             var response = await CointreeHttpClient.SendAsync(request);
 
